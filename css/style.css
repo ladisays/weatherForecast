@@ -1,0 +1,82 @@
+html, body {
+  height: 100%;
+}
+body {
+  background-color: #fff;
+  width: 100%;
+  margin: 0;
+}
+
+#wrapper {
+  min-width: 100%;
+}
+
+#locationSearch {
+  height: 4em;
+  background-color: #117CF3;
+  margin: 0 auto;
+  padding: 12px 10px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+#address {
+  width: 15em;
+  height: 2.75em;
+  border-radius: 5px;
+  padding: 0 10px;
+}
+
+#address:focus {
+  outline: none;
+}
+
+button {
+  height: 2.75em;
+  border-radius: 5px;
+  padding: 0 3em;
+  color: #fff;
+  background-color: #4D92E0;
+  border: 1px solid #105FB7;
+  line-height: 2.75em;
+  letter-spacing: .1em;
+}
+
+button:hover {
+  background-color: #105FB7;
+}
+
+
+#content {
+  background-color: lightgreen;
+  min-width: 100%;
+  height: 500px;
+  position: relative;
+}
+
+#locationMap {
+  background-color: lightyellow;
+  /*padding: 2.5% auto;*/
+  height: 100%;
+  width: 100%;
+  position: relative;
+  z-index: 0;
+}
+
+#forecast {
+  position: absolute;
+  right: 2%;
+  top: 17%;
+  background-color: white;
+  width: 30%;
+  min-width: 10em;
+  height: 60%;
+  box-shadow: 0 2px 5px #555;
+  border-radius: 8px;
+  z-index: 10000;
+}
+
+
+
+
+
