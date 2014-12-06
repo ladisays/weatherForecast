@@ -1,21 +1,15 @@
 var weatherForecast = {
 
   init: function() {
-    this.getCurrentLocation;
+    this.getCurrentLocation();
     this.$address = $('#address');
     this.$locationMap = $('#locationMap');
     this.$form = $('form');
     this.$form.submit(function (e) {
       e.preventDefault();
+      weatherForecast.getGeoLocation(weatherForecast.$address.val());
     });
     this.locationArray = [];
-
-    var mapOptions = {
-      zoom: 14,
-      center: new google.maps.LatLng(this.coordsLatitude, this.coordsLongitude)
-    };
-
-    var map = new google.maps.Map(document.getElementById('locationMap'), mapOptions);
   },
 
   getCurrentLocation: function() {
@@ -27,20 +21,42 @@ var weatherForecast = {
     {
       alert("Geolocation is not supported by this browser.");
     }
-
     function showPosition(pos){
       weatherForecast.coordsLatitude = pos.coords.latitude;
       weatherForecast.coordsLongitude = pos.coords.longitude;
-      alert("Latitude: "+pos.coords.latitude+"nLongitude: "+pos.coords.longitude);
+      weatherForecast.init();
+
+      weatherForecast.createMap(weatherForecast.coordsLatitude, weatherForecast.coordsLongitude, 'Current Map Location!');
+      
+      weatherForecast.getWeatherInfo(weatherForecast.coordsLatitude, weatherForecast.coordsLongitude);
     }
+  },
+
+  createMap: function(lat, lon, markerTitle) {
+    var mapCoordinates = new google.maps.LatLng(lat, lon);
+      
+      var mapOptions = {
+        zoom: 12,
+        center: mapCoordinates
+      };
+
+      var map = new google.maps.Map(document.getElementById('locationMap'), mapOptions);
+
+      var marker = new google.maps.Marker({
+        position: mapCoordinates,
+        map: map,
+        title: markerTitle
+      });
   },
 
   getValueFromCallback: function(output) {
     if(output.length > 0) {
       this.coordsLatitude = output[0];
       this.coordsLongitude = output[1];
-      console.log(this.coordsLatitude);
-      console.log(this.coordsLongitude);
+      this.getWeatherInfo(this.coordsLatitude, this.coordsLongitude);
+      this.createMap(this.coordsLatitude, this.coordsLongitude, 'New Location');
+      // console.log(this.coordsLatitude);
+      // console.log(this.coordsLongitude);
     }
 
     else {
@@ -61,55 +77,46 @@ var weatherForecast = {
 
   getWeatherInfo: function(lat, lon) {
     var url = 'https://api.forecast.io/forecast/e5ffdd91b1fb638fdf571cfd84c76c8d/';
-    url += this.coordsLatitude;
+    url += lat;
     url += ',';
-    url += this.coordsLongitude;
+    url += lon;
     url += '?callback=?';
+
+    function timeConverter(timestamp){
+      var a = new Date(timestamp * 1000);
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var year = a.getFullYear();
+      var month = months[a.getMonth()];
+      var date = a.getDate();
+      var hour = a.getHours();
+      var min = a.getMinutes();
+      var sec = a.getSeconds();
+      var time = month + ' ' + date + ',' + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+      return time;
+    }
 
     function displayForecast(fc) {
       console.log(fc);
-      $('#forecast').html(fc);
+      var temp = Math.round(((fc.currently.temperature - 32) * 5) / 9);
+      var time = timeConverter(fc.currently.time);
+      console.log(time);
+      $div = $('<div>');
+      $Summary = $('<h2>').text(fc.currently.summary);
+      $HourlySummary = $('<h4>').text(fc.hourly.summary);
+      $Temperature = $('<h1>').text(temp + "\u00B0" + "c");
+      $div.append($Temperature, $Summary, $HourlySummary);
+      $('#forecast').html($div);
     }
 
-    console.log($.getJSON(url, displayForecast));
+    $.getJSON(url, displayForecast);
   }
 };
-google.maps.event.addDomListener(window, 'load', weatherForecast.init);
-
-$(document).ready(function() {
-  if(navigator.geolocation)
-  {
-    navigator.geolocation.getCurrentPosition(showPosition);
-  }
-  else
-  {
-    alert("Geolocation is not supported by this browser.");
-  }
-  function showPosition(pos){
-    weatherForecast.coordsLatitude = pos.coords.latitude;
-    weatherForecast.coordsLongitude = pos.coords.longitude;
-    weatherForecast.init();
-    console.log("Latitude: "+pos.coords.latitude+" Longitude: "+pos.coords.longitude);
-  }
-});
 
 
+// google.maps.event.addDomListener(window, 'load', weatherForecast.init);
 
-// function geoLocation(addLoc) {
-//   var locationDetails;
-//   var geocoder = new google.maps.Geocoder();
-//   geocoder.geocode( {'address': addLoc}, function(results) {
-//     locationDetails = results[0].geometry.location;
-//     var loca = [locationDetails.B, locationDetails.k];
-//     out(loca);
-//   }); 
-//   // console.log(loc);
-// }
+$(document).ready(weatherForecast.init());
 
-// function out(results) {
-//   console.log(results);
-//   $('#forecast').html(results);
-// }
 
 
 

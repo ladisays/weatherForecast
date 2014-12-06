@@ -21,7 +21,8 @@ body {
 }
 
 #address {
-  width: 15em;
+  max-width: 15em;
+  /*min-width: 5em;*/
   height: 2.75em;
   border-radius: 5px;
   padding: 0 10px;
@@ -67,14 +68,52 @@ button:hover {
   position: absolute;
   right: 2%;
   top: 17%;
+  z-index: 10000;
   background-color: white;
   width: 30%;
   min-width: 10em;
   height: 60%;
   box-shadow: 0 2px 5px #555;
   border-radius: 8px;
-  z-index: 10000;
+  font-family: 'Bree Serif', serif;
+  box-sizing: border-box;
 }
+
+#forecast div {
+  width: 90%;
+  height: 90%;
+  margin: 5%;
+  background-color: #4D92E0;
+  text-align: center;
+  color: #fff;
+  padding: 10%;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+#forecast h1 {
+  font-size: 2.5em;
+}
+
+#forecast h2 {
+  font-size: 1.25em;
+  margin: 5px 0;
+}
+
+#forecast h4 {
+  font-size: 0.725em;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 
