@@ -24,13 +24,11 @@ var weatherForecast = {
     function showPosition(pos){
       weatherForecast.coordsLatitude = pos.coords.latitude;
       weatherForecast.coordsLongitude = pos.coords.longitude;
-      weatherForecast.init();
+      //weatherForecast.init();
 
       weatherForecast.createMap(weatherForecast.coordsLatitude, weatherForecast.coordsLongitude, 'Your Current Location!');
       
       weatherForecast.getWeatherInfo(weatherForecast.coordsLatitude, weatherForecast.coordsLongitude);
-
-      // $content.show(600);
 
     }
   },
@@ -90,22 +88,25 @@ var weatherForecast = {
 
     function timeConverter(timestamp){
       var a = new Date(timestamp * 1000);
-      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      var year = a.getFullYear();
-      var month = months[a.getMonth()];
-      var date = a.getDate();
-      var hour = a.getHours();
-      var min = a.getMinutes();
-      var sec = a.getSeconds();
-      var time = month + ' ' + date + ',' + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
-      return time;
+      // console.log(a.toUTCString(), a.getDay());
+      // var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      // var year = a.getFullYear();
+      // var month = months[a.getMonth()];
+      // var date = a.getDate();
+      // var hour = a.getHours();
+      // var min = a.getMinutes();
+      // var sec = a.getSeconds();
+      // var time = month + ' ' + date + ',' + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+      var fullDate = a.toUTCString();
+      day = fullDate[0] + fullDate[1] + fullDate[2];
+      return day;
     }
 
     function displayForecast(fc) {
-      // console.log(fc);
+      //console.log(fc);
       var temp = Math.round(((fc.currently.temperature - 32) * 5) / 9);
-      // var time = timeConverter(fc.currently.time);
-      // console.log(time);
+      var time = timeConverter(fc.currently.time);
+      //console.log(time);
       var imgSrc = 'images/' + fc.currently.icon + '.png';
       $div = $('<div>');
       $weatherIcon = $('<img>').attr('src', imgSrc);
@@ -115,19 +116,47 @@ var weatherForecast = {
       $Address = $('<h3>').text(weatherForecast.formattedAddress);
       $div.append($weatherIcon, $Temperature, $Summary, $HourlySummary, $Address);
       $('#forecast').html($div);
+
+      var weeklyHTML = '<div><ul>';
+
+      $.each(fc.daily.data, function(index, day) {
+        var weekday = timeConverter(day.time);
+        var dailyIMG = 'images/' + day.icon + '.png';
+        // $dailyIcon = $('<img>').attr('src', dailyIMG);
+        // console.log(index, day, weekday);
+        weeklyHTML += '<li><span>' + weekday.toUpperCase() + '</span> ';
+        weeklyHTML += '<img src="' + dailyIMG + '"/>';
+        weeklyHTML += ' ' + day.summary + '</li>';
+      });
+
+      weeklyHTML += '</ul></div>';
+      $('#weeklyForecast').html(weeklyHTML).hide();
+
+      $('#forecast').click(function () {
+        $('#weeklyForecast').slideToggle('slow', 'linear', function(){});
+      });
     }
 
     $.getJSON(url, displayForecast);
+
+    $alert = $('#alert').show('slow');
+    // $alert.click(function() {
+    //   $alert.hide();
+    // });
+
+    $btnAlert = $('#closeAlertInfo').click(function(){
+      $alert.hide();
+    });
   }
 };
 
 
-// google.maps.event.addDomListener(window, 'load', weatherForecast.init);
+// google.maps.event.addDomListener(window, 'load', weatherForecast.getCurrentLocation);
 
 $(document).ready(function() {
-  $content = $('#content');
   // $content.hide(); 
-  weatherForecast.init()
+  $alert = $('#alert').hide();
+  weatherForecast.init();
 });
 
 
