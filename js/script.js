@@ -39,7 +39,7 @@ var weatherForecast = {
     var mapCoordinates = new google.maps.LatLng(lat, lon);
       
     var mapOptions = {
-      zoom: 10,
+      zoom: 15,
       center: mapCoordinates
     };
 
