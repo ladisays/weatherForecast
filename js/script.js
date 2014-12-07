@@ -26,35 +26,39 @@ var weatherForecast = {
       weatherForecast.coordsLongitude = pos.coords.longitude;
       weatherForecast.init();
 
-      weatherForecast.createMap(weatherForecast.coordsLatitude, weatherForecast.coordsLongitude, 'Current Map Location!');
+      weatherForecast.createMap(weatherForecast.coordsLatitude, weatherForecast.coordsLongitude, 'Your Current Location!');
       
       weatherForecast.getWeatherInfo(weatherForecast.coordsLatitude, weatherForecast.coordsLongitude);
+
+      // $content.show(600);
+
     }
   },
 
   createMap: function(lat, lon, markerTitle) {
     var mapCoordinates = new google.maps.LatLng(lat, lon);
       
-      var mapOptions = {
-        zoom: 12,
-        center: mapCoordinates
-      };
+    var mapOptions = {
+      zoom: 10,
+      center: mapCoordinates
+    };
 
-      var map = new google.maps.Map(document.getElementById('locationMap'), mapOptions);
+    var map = new google.maps.Map(document.getElementById('locationMap'), mapOptions);
 
-      var marker = new google.maps.Marker({
-        position: mapCoordinates,
-        map: map,
-        title: markerTitle
-      });
+    var marker = new google.maps.Marker({
+      position: mapCoordinates,
+      map: map,
+      title: markerTitle
+    });
   },
 
   getValueFromCallback: function(output) {
     if(output.length > 0) {
       this.coordsLatitude = output[0];
       this.coordsLongitude = output[1];
+      this.formattedAddress = output[2];
       this.getWeatherInfo(this.coordsLatitude, this.coordsLongitude);
-      this.createMap(this.coordsLatitude, this.coordsLongitude, 'New Location');
+      this.createMap(this.coordsLatitude, this.coordsLongitude, 'Map Position');
       // console.log(this.coordsLatitude);
       // console.log(this.coordsLongitude);
     }
@@ -68,9 +72,11 @@ var weatherForecast = {
     var geocoder = new google.maps.Geocoder();
     var loca = [];
     geocoder.geocode( {'address': addLoc}, function(results) {
+      var formattedAddress = results[0].formatted_address;
       var locationDetails = results[0].geometry.location;
       loca.push(locationDetails.lat());
       loca.push(locationDetails.lng());
+      loca.push(formattedAddress);
       weatherForecast.getValueFromCallback(loca);
     });
   },
@@ -96,15 +102,18 @@ var weatherForecast = {
     }
 
     function displayForecast(fc) {
-      console.log(fc);
+      // console.log(fc);
       var temp = Math.round(((fc.currently.temperature - 32) * 5) / 9);
-      var time = timeConverter(fc.currently.time);
-      console.log(time);
+      // var time = timeConverter(fc.currently.time);
+      // console.log(time);
+      var imgSrc = 'images/' + fc.currently.icon + '.png';
       $div = $('<div>');
+      $weatherIcon = $('<img>').attr('src', imgSrc);
       $Summary = $('<h2>').text(fc.currently.summary);
       $HourlySummary = $('<h4>').text(fc.hourly.summary);
       $Temperature = $('<h1>').text(temp + "\u00B0" + "c");
-      $div.append($Temperature, $Summary, $HourlySummary);
+      $Address = $('<h3>').text(weatherForecast.formattedAddress);
+      $div.append($weatherIcon, $Temperature, $Summary, $HourlySummary, $Address);
       $('#forecast').html($div);
     }
 
@@ -115,8 +124,11 @@ var weatherForecast = {
 
 // google.maps.event.addDomListener(window, 'load', weatherForecast.init);
 
-$(document).ready(weatherForecast.init());
-
+$(document).ready(function() {
+  $content = $('#content');
+  // $content.hide(); 
+  weatherForecast.init()
+});
 
 
 

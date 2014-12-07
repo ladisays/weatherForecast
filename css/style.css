@@ -9,10 +9,12 @@ body {
 
 #wrapper {
   min-width: 100%;
+  height: 100vh;
+  background-color: #000;
 }
 
 #locationSearch {
-  height: 4em;
+  height: 10%;
   background-color: #117CF3;
   margin: 0 auto;
   padding: 12px 10px;
@@ -49,14 +51,12 @@ button:hover {
 
 
 #content {
-  background-color: lightgreen;
   min-width: 100%;
-  height: 500px;
+  height: 90%;
   position: relative;
 }
 
 #locationMap {
-  background-color: lightyellow;
   /*padding: 2.5% auto;*/
   height: 100%;
   width: 100%;
@@ -66,27 +66,28 @@ button:hover {
 
 #forecast {
   position: absolute;
-  right: 2%;
-  top: 17%;
+  right: 1%;
+  top: 5%;
   z-index: 10000;
-  background-color: white;
-  width: 30%;
+  background-color: rgba(0, 0, 0, 0.2);
+  width: 15%;
   min-width: 10em;
-  height: 60%;
+  height: 20em;
   box-shadow: 0 2px 5px #555;
   border-radius: 8px;
   font-family: 'Bree Serif', serif;
+  padding: 0.625em;
   box-sizing: border-box;
 }
 
 #forecast div {
-  width: 90%;
-  height: 90%;
-  margin: 5%;
-  background-color: #4D92E0;
+  width: 100%;
+  height: 100%;
+  /*margin: 5%;*/
+  background-color: rgba(77, 146, 224, 0.7);
   text-align: center;
-  color: #fff;
-  padding: 10%;
+  color: #efefef;
+  padding: 0 2.5%;
   border-radius: 8px;
   box-sizing: border-box;
 }
@@ -103,13 +104,6 @@ button:hover {
 #forecast h4 {
   font-size: 0.725em;
 }
-
-
-
-
-
-
-
 
 
 
