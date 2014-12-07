@@ -13,24 +13,35 @@ var weatherForecast = {
   },
 
   getCurrentLocation: function() {
-    if(navigator.geolocation)
-    {
+    if(navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(showPosition);
     }
-    else
-    {
+
+    else {
       alert("Geolocation is not supported by this browser.");
     }
-    function showPosition(pos){
+
+    function showPosition(pos) {
       weatherForecast.coordsLatitude = pos.coords.latitude;
       weatherForecast.coordsLongitude = pos.coords.longitude;
-      //weatherForecast.init();
-
-      weatherForecast.createMap(weatherForecast.coordsLatitude, weatherForecast.coordsLongitude, 'Your Current Location!');
       
-      weatherForecast.getWeatherInfo(weatherForecast.coordsLatitude, weatherForecast.coordsLongitude);
+      var coords = new Array(2);
+      coords[0] = weatherForecast.coordsLatitude;
+      coords[1] = weatherForecast.coordsLongitude;
 
+      weatherForecast.createMap(coords[0], coords[1], 'Your Current Location!');
+      
+      weatherForecast.getWeatherInfo(coords[0], coords[1]);
     }
+
+    $alert = $('#alert').show('slow');
+    // $alert.click(function() {
+    //   $alert.hide();
+    // });
+
+    $btnAlert = $('#closeAlertInfo').click(function(){
+      $alert.hide();
+    });
   },
 
   createMap: function(lat, lon, markerTitle) {
@@ -88,15 +99,6 @@ var weatherForecast = {
 
     function timeConverter(timestamp){
       var a = new Date(timestamp * 1000);
-      // console.log(a.toUTCString(), a.getDay());
-      // var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-      // var year = a.getFullYear();
-      // var month = months[a.getMonth()];
-      // var date = a.getDate();
-      // var hour = a.getHours();
-      // var min = a.getMinutes();
-      // var sec = a.getSeconds();
-      // var time = month + ' ' + date + ',' + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
       var fullDate = a.toUTCString();
       day = fullDate[0] + fullDate[1] + fullDate[2];
       return day;
@@ -122,7 +124,7 @@ var weatherForecast = {
       $.each(fc.daily.data, function(index, day) {
         var weekday = timeConverter(day.time);
         var dailyIMG = 'images/' + day.icon + '.png';
-        // $dailyIcon = $('<img>').attr('src', dailyIMG);
+
         // console.log(index, day, weekday);
         weeklyHTML += '<li><span>' + weekday.toUpperCase() + '</span> ';
         weeklyHTML += '<img src="' + dailyIMG + '"/>';
@@ -130,23 +132,14 @@ var weatherForecast = {
       });
 
       weeklyHTML += '</ul></div>';
-      $('#weeklyForecast').html(weeklyHTML).hide();
+      $('#weeklyForecast').html(weeklyHTML);
 
       $('#forecast').click(function () {
-        $('#weeklyForecast').slideToggle('slow', 'linear', function(){});
+        $('#weeklyForecast').hide('slow');
       });
     }
 
     $.getJSON(url, displayForecast);
-
-    $alert = $('#alert').show('slow');
-    // $alert.click(function() {
-    //   $alert.hide();
-    // });
-
-    $btnAlert = $('#closeAlertInfo').click(function(){
-      $alert.hide();
-    });
   }
 };
 
@@ -171,3 +164,12 @@ $(document).ready(function() {
 
 
 
+// console.log(a.toUTCString(), a.getDay());
+// var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+// var year = a.getFullYear();
+// var month = months[a.getMonth()];
+// var date = a.getDate();
+// var hour = a.getHours();
+// var min = a.getMinutes();
+// var sec = a.getSeconds();
+// var time = month + ' ' + date + ',' + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
