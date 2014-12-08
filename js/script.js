@@ -1,5 +1,3 @@
-
-
 var weatherForecast = {
 
   init: function() {
