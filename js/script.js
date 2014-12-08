@@ -1,6 +1,9 @@
+
+
 var weatherForecast = {
 
   init: function() {
+    var self = this;
     this.getCurrentLocation(true);
     this.$address = $('#address').geocomplete();
     this.$locationMap = $('#locationMap');
@@ -8,17 +11,14 @@ var weatherForecast = {
     this.$form.submit(function (e) {
       e.preventDefault();
 
-      if(weatherForecast.$address.val() === "" || document.getElementById('address').value === "") {
+      if(self.$address.val() === "" || document.getElementById('address').value === "") {
         alert("Please put in an address!");
       }
 
       else {
 
-        $('#address').prop("disabled", true);
-        $('#btnSearch').attr('disabled', true).val('Searching...');
-
-        weatherForecast.getGeoLocation(weatherForecast.$address.val());
-        weatherForecast.$address.val("");
+        self.getGeoLocation(self.$address.val());
+        self.$address.val("");
         $('#home').show('slow');
       }
     });
@@ -26,6 +26,7 @@ var weatherForecast = {
   },
 
   getCurrentLocation: function(showAlert) {
+    var self = this;
     if(navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(showPosition);
     }
@@ -35,16 +36,16 @@ var weatherForecast = {
     }
 
     function showPosition(pos) {
-      weatherForecast.coordsLatitude = pos.coords.latitude;
-      weatherForecast.coordsLongitude = pos.coords.longitude;
+      self.coordsLatitude = pos.coords.latitude;
+      self.coordsLongitude = pos.coords.longitude;
       
       var coords = new Array(2);
-      coords[0] = weatherForecast.coordsLatitude;
-      coords[1] = weatherForecast.coordsLongitude;
+      coords[0] = self.coordsLatitude;
+      coords[1] = self.coordsLongitude;
 
-      weatherForecast.createMap(coords[0], coords[1], 'Your Current Location!');
+      self.createMap(coords[0], coords[1], 'Your Current Location!')
       
-      weatherForecast.getWeatherInfo(coords[0], coords[1]);
+      self.getWeatherInfo(coords[0], coords[1]);
     }
 
     if(showAlert === true) {
@@ -56,7 +57,19 @@ var weatherForecast = {
     }
   },
 
+  getJSON: function(url, callback) {
+    if($.getJSON(url, callback)) {
+      return true;
+    }
+    else {
+      alert('Unable to fetch weather forecast');
+      return false;
+    }
+  },
+
   createMap: function(lat, lon, markerTitle) {
+    // $('#address').prop("disabled", true);
+    // $('#btnSearch').attr('disabled', true).text('Searching...');
     var mapCoordinates = new google.maps.LatLng(lat, lon);
       
     var mapOptions = {
@@ -90,6 +103,7 @@ var weatherForecast = {
   },
 
   getGeoLocation: function(addLoc) {
+    var self = this;
     var geocoder = new google.maps.Geocoder();
     var loca = [];
     geocoder.geocode( {'address': addLoc}, function(results) {
@@ -98,59 +112,59 @@ var weatherForecast = {
       loca.push(locationDetails.lat());
       loca.push(locationDetails.lng());
       loca.push(formattedAddress);
-      weatherForecast.getValueFromCallback(loca);
+      self.getValueFromCallback(loca);
     });
   },
 
   getWeatherInfo: function(lat, lon) {
-    var url = 'https://api.forecast.io/forecast/e5ffdd91b1fb638fdf571cfd84c76c8d/';
+
+    var url = 'https://api.forecast.io/forecast/e5ffdd91b1fb638fdf571cfd84c76c8d/',
+        self = this;
     url += lat;
     url += ',';
     url += lon;
     url += '?callback=?';
 
     function timeConverter(timestamp){
-      var a = new Date(timestamp * 1000);
-      var fullDate = a.toUTCString();
+      var a = new Date(timestamp * 1000),
+          fullDate = a.toUTCString();
       day = fullDate[0] + fullDate[1] + fullDate[2];
       return day;
     }
 
     function displayForecast(fc) {
       //console.log(fc);
-      var temp = Math.round(((fc.currently.temperature - 32) * 5) / 9);
-      var time = timeConverter(fc.currently.time);
-      //console.log(time);
-      var imgSrc = 'images/' + fc.currently.icon + '.png';
-      var $div = $('<div>');
-      var $weatherIcon = $('<img>').attr('src', imgSrc);
-      var $Summary = $('<h2>').text(fc.currently.summary);
-      var $HourlySummary = $('<h4>').text(fc.hourly.summary);
-      var $Temperature = $('<h1>').text(temp + "\u00B0" + "c");
-      var $Address = $('<h3>').text(weatherForecast.formattedAddress);
+      var temp = Math.round(((fc.currently.temperature - 32) * 5) / 9),
+          time = timeConverter(fc.currently.time),
+          imgSrc = 'images/' + fc.currently.icon + '.png',
+          $div = $('<div>'),
+          $weatherIcon = $('<img>').attr('src', imgSrc),
+          $Summary = $('<h2>').text(fc.currently.summary),
+          $HourlySummary = $('<h4>').text(fc.hourly.summary),
+          $Temperature = $('<h1>').text(temp + "\u00B0" + "c"),
+          $Address = $('<h3>').text(weatherForecast.formattedAddress),
+          weeklyHTML = '<div><ul>';
+
       $div.append($weatherIcon, $Temperature, $Summary, $HourlySummary, $Address);
       $('#forecast').html($div);
 
-      var weeklyHTML = '<div><ul>';
-
       $.each(fc.daily.data, function(index, day) {
-        var weekday = timeConverter(day.time);
-        var dailyIMG = 'images/' + day.icon + '.png';
+        var weekday = timeConverter(day.time),
+            dailyIMG = 'images/' + day.icon + '.png';
 
-        // console.log(index, day, weekday);
-        weeklyHTML += '<li><span>' + weekday.toUpperCase() + '</span> ';
+        weeklyHTML += '<li><span>' + weekday.toUpperCase() + '</span>';
         weeklyHTML += '<img src="' + dailyIMG + '"/>';
-        weeklyHTML += ' ' + day.summary + '</li>';
+        weeklyHTML += day.summary + '</li>';
       });
 
       weeklyHTML += '</ul></div>';
-      $('#weeklyForecast').html(weeklyHTML).hide();
 
-      $('#address').prop("disabled", false);
-      $('#btnSearch').attr('disabled', false).val('Search');
+      return $('#weeklyForecast').html(weeklyHTML);
     }
 
-    $.getJSON(url, displayForecast);
+    if(self.getJSON(url, displayForecast)) {
+      return true;
+    }
   }
 };
 
@@ -161,14 +175,22 @@ $(document).ready(function() {
   // $content.hide(); 
   $('#home').hide();
   $('#home').click(function(){
-    weatherForecast.getCurrentLocation();
+    return weatherForecast.getCurrentLocation();
   });
   $('#alert').hide();
 
+  $('#weeklyForecast').hide();
+
   weatherForecast.init();
+
+  var $div = $('<div>').html('Loading...');
+  $('#forecast').html($div);
+
   $('#forecast').click(function () {
-    $('#weeklyForecast').toggle('slow');
+    return $('#weeklyForecast').toggle('slow');
   });
+
+  return;
 });
 
 
