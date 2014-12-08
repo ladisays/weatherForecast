@@ -1,18 +1,19 @@
 var weatherForecast = {
 
   init: function() {
-    this.getCurrentLocation();
-    this.$address = $('#address');
+    this.getCurrentLocation(true);
+    this.$address = $('#address').geocomplete();
     this.$locationMap = $('#locationMap');
     this.$form = $('form');
     this.$form.submit(function (e) {
       e.preventDefault();
       weatherForecast.getGeoLocation(weatherForecast.$address.val());
+      weatherForecast.$address.val("");
     });
     this.locationArray = [];
   },
 
-  getCurrentLocation: function() {
+  getCurrentLocation: function(showAlert) {
     if(navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(showPosition);
     }
@@ -34,14 +35,13 @@ var weatherForecast = {
       weatherForecast.getWeatherInfo(coords[0], coords[1]);
     }
 
-    $alert = $('#alert').show('slow');
-    // $alert.click(function() {
-    //   $alert.hide();
-    // });
+    if(showAlert === true) {
+      $alert = $('#alert').show('slow');
 
-    $btnAlert = $('#closeAlertInfo').click(function(){
-      $alert.hide();
-    });
+      $btnAlert = $('#closeAlertInfo').click(function(){
+        $alert.hide();
+      });
+    }
   },
 
   createMap: function(lat, lon, markerTitle) {
@@ -132,11 +132,7 @@ var weatherForecast = {
       });
 
       weeklyHTML += '</ul></div>';
-      $('#weeklyForecast').html(weeklyHTML);
-
-      $('#forecast').click(function () {
-        $('#weeklyForecast').hide('slow');
-      });
+      $('#weeklyForecast').html(weeklyHTML).hide();
     }
 
     $.getJSON(url, displayForecast);
@@ -150,6 +146,12 @@ $(document).ready(function() {
   // $content.hide(); 
   $alert = $('#alert').hide();
   weatherForecast.init();
+  $('#forecast').click(function () {
+    $('#weeklyForecast').toggle('slow');
+  });
+  $('#home').click(function(){
+    weatherForecast.getCurrentLocation();
+  });
 });
 
 

@@ -4,12 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width initial-scale=1">
     <title>Weather Forecast | Home</title>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Bree+Serif' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="css/reset.css">
     <link rel="stylesheet" type="text/css" href="css/style.css">
-    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;sensor=false"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&amp;sensor=false&amp;libraries=places"></script>
+    <script type="text/javascript" src="js/jquery.geocomplete.js"></script>
     <script type="text/javascript" src="js/script.js"></script>
   </head>
   <body>
@@ -26,10 +28,10 @@
         <div id="weeklyForecast"></div>
       </div>
     </div>
-
+    <i id="home" class="fa fa-home fa-2x"></i>
     <div id="alert">
       <div>
-        <p>Click on the weather info box to the right of the page to hide the weekly weather info!</p>
+        <p>Click on the weather info box to the right of the page to toggle the weekly weather info!</p>
         <button id="closeAlertInfo" type="button">Close</button>
       </div>
     </div>
