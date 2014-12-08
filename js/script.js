@@ -9,7 +9,7 @@ var weatherForecast = {
     this.$form.submit(function (e) {
       e.preventDefault();
 
-      if(self.$address.val() === "" || document.getElementById('address').value === "") {
+      if(self.$address.val() === "") {
         alert("Please put in an address!");
       }
 
@@ -50,7 +50,7 @@ var weatherForecast = {
       $alert = $('#alert').show('slow');
 
       $btnAlert = $('#closeAlertInfo').click(function(){
-        $alert.hide();
+        return $alert.hide();
       });
     }
   },
@@ -68,20 +68,22 @@ var weatherForecast = {
   createMap: function(lat, lon, markerTitle) {
     // $('#address').prop("disabled", true);
     // $('#btnSearch').attr('disabled', true).text('Searching...');
-    var mapCoordinates = new google.maps.LatLng(lat, lon);
+    var mapCoordinates = new google.maps.LatLng(lat, lon),
       
-    var mapOptions = {
-      zoom: 15,
-      center: mapCoordinates
-    };
+        mapOptions = {
+          zoom: 15,
+          center: mapCoordinates
+        },
 
-    var map = new google.maps.Map(document.getElementById('locationMap'), mapOptions);
+        map = new google.maps.Map(document.getElementById('locationMap'), mapOptions),
 
-    var marker = new google.maps.Marker({
-      position: mapCoordinates,
-      map: map,
-      title: markerTitle
-    });
+        marker = new google.maps.Marker({
+          position: mapCoordinates,
+          map: map,
+          title: markerTitle
+        });
+
+    return;
   },
 
   getValueFromCallback: function(output) {
@@ -91,12 +93,6 @@ var weatherForecast = {
       this.formattedAddress = output[2];
       this.getWeatherInfo(this.coordsLatitude, this.coordsLongitude);
       this.createMap(this.coordsLatitude, this.coordsLongitude, 'Map Position');
-      // console.log(this.coordsLatitude);
-      // console.log(this.coordsLongitude);
-    }
-
-    else {
-      console.log("Oops! Couldn't calculate the co-ordinates for the specified address.");
     }
   },
 
@@ -104,13 +100,19 @@ var weatherForecast = {
     var self = this;
     var geocoder = new google.maps.Geocoder();
     var loca = [];
-    geocoder.geocode( {'address': addLoc}, function(results) {
-      var formattedAddress = results[0].formatted_address;
-      var locationDetails = results[0].geometry.location;
-      loca.push(locationDetails.lat());
-      loca.push(locationDetails.lng());
-      loca.push(formattedAddress);
-      self.getValueFromCallback(loca);
+    geocoder.geocode({'address': addLoc}, function(results, status) {
+      if(status === "OK") {
+        var formattedAddress = results[0].formatted_address,
+            locationDetails = results[0].geometry.location;
+        // console.log(status, results);
+        loca.push(locationDetails.lat());
+        loca.push(locationDetails.lng());
+        loca.push(formattedAddress);
+        self.getValueFromCallback(loca);
+      }
+      else {
+        return alert('Oops! We are sorry.\nWe could not process your request.\nPlease try again later.');
+      }
     });
   },
 
@@ -163,19 +165,27 @@ var weatherForecast = {
     if(self.getJSON(url, displayForecast)) {
       return true;
     }
+    else {
+      alert('We are not able to get you the forecast for now!\nPlease try again later.');
+
+      return false;
+    }
   }
 };
 
 
 // google.maps.event.addDomListener(window, 'load', weatherForecast.getCurrentLocation);
 
+// Once the page is fully rendered,
+// hide the home icon at the top-left corner
+// set the click function of the home icon (when visible)
+// to get the current user's location on the map
 $(document).ready(function() {
   // $content.hide(); 
   $('#home').hide();
   $('#home').click(function(){
     return weatherForecast.getCurrentLocation();
   });
-  $('#alert').hide();
 
   $('#weeklyForecast').hide();
 
