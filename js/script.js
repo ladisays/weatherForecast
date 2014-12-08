@@ -7,8 +7,20 @@ var weatherForecast = {
     this.$form = $('form');
     this.$form.submit(function (e) {
       e.preventDefault();
-      weatherForecast.getGeoLocation(weatherForecast.$address.val());
-      weatherForecast.$address.val("");
+
+      if(weatherForecast.$address.val() === "" || document.getElementById('address').value === "") {
+        alert("Please put in an address!");
+      }
+
+      else {
+
+        $('#address').prop("disabled", true);
+        $('#btnSearch').attr('disabled', true).val('Searching...');
+
+        weatherForecast.getGeoLocation(weatherForecast.$address.val());
+        weatherForecast.$address.val("");
+        $('#home').show('slow');
+      }
     });
     this.locationArray = [];
   },
@@ -110,12 +122,12 @@ var weatherForecast = {
       var time = timeConverter(fc.currently.time);
       //console.log(time);
       var imgSrc = 'images/' + fc.currently.icon + '.png';
-      $div = $('<div>');
-      $weatherIcon = $('<img>').attr('src', imgSrc);
-      $Summary = $('<h2>').text(fc.currently.summary);
-      $HourlySummary = $('<h4>').text(fc.hourly.summary);
-      $Temperature = $('<h1>').text(temp + "\u00B0" + "c");
-      $Address = $('<h3>').text(weatherForecast.formattedAddress);
+      var $div = $('<div>');
+      var $weatherIcon = $('<img>').attr('src', imgSrc);
+      var $Summary = $('<h2>').text(fc.currently.summary);
+      var $HourlySummary = $('<h4>').text(fc.hourly.summary);
+      var $Temperature = $('<h1>').text(temp + "\u00B0" + "c");
+      var $Address = $('<h3>').text(weatherForecast.formattedAddress);
       $div.append($weatherIcon, $Temperature, $Summary, $HourlySummary, $Address);
       $('#forecast').html($div);
 
@@ -133,6 +145,9 @@ var weatherForecast = {
 
       weeklyHTML += '</ul></div>';
       $('#weeklyForecast').html(weeklyHTML).hide();
+
+      $('#address').prop("disabled", false);
+      $('#btnSearch').attr('disabled', false).val('Search');
     }
 
     $.getJSON(url, displayForecast);
@@ -144,13 +159,15 @@ var weatherForecast = {
 
 $(document).ready(function() {
   // $content.hide(); 
-  $alert = $('#alert').hide();
+  $('#home').hide();
+  $('#home').click(function(){
+    weatherForecast.getCurrentLocation();
+  });
+  $('#alert').hide();
+
   weatherForecast.init();
   $('#forecast').click(function () {
     $('#weeklyForecast').toggle('slow');
-  });
-  $('#home').click(function(){
-    weatherForecast.getCurrentLocation();
   });
 });
 

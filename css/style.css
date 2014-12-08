@@ -91,7 +91,7 @@ button:hover {
   /*background-color: rgba(77, 146, 224, 0.7);*/
   background-color: rgba(0, 147, 10, 0.7);
   text-align: center;
-  color: #efefef;
+  color: #fff;
   padding: 2.5%;
   border-radius: 8px;
   box-sizing: border-box;
@@ -132,7 +132,7 @@ button:hover {
   /*margin: 5%;*/
   /*background-color: rgb(77, 146, 224);*/
   background-color: rgba(0, 147, 10, 0.7);
-  color: #efefef;
+  color: #fff;
   padding: 2px;
   border-radius: 8px;
   box-sizing: border-box;
@@ -207,7 +207,7 @@ button:hover {
 }
 
 #home:hover {
-  color: #4D92E0;
+  color: rgba(0, 150, 15, 0.8);
 }
 
 
